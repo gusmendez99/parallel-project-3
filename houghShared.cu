@@ -115,7 +115,7 @@ __global__ void GPU_HoughTranShared(unsigned char *pic, int w, int h, int *acc, 
 
   // atomic op, add local acc to the global memory acc
   for (i = locID ; i < degreeBins * rBins ; i += blockDim.x)
-    atomicAdd (acc + 1, localAcc[i]);
+    atomicAdd (acc + i, localAcc[i]);
 
 }
 
