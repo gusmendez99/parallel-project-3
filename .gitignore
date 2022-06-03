@@ -54,3 +54,4 @@ dkms.conf
 # Obj generated with makefile
 houghGlobal
 houghConstant
+houghShared
