@@ -83,7 +83,15 @@ __global__ void GPU_HoughTranConst(unsigned char *pic, int w, int h, int *acc, f
   int yCent = h / 2;
 
   // TODO: Explicar bien bien esta parte. Dibujar un rectangulo a modo de imagen sirve para visualizarlo mejor
-  // R// xyz
+  /* R// Para calcular xCoord se debe realizar el módulo de gloID con el ancho de la imagen
+   con el fin de poder ubicar en qué posición en el eje x se encuentra nuestro hilo.
+   Luego, se realiza un corrimiento respecto a centro de la imagen.
+   Para la coordenada en y se debe divide el id de nuestro hilo por el ancho
+   esto nos ubica en el eje vertical. Luego este valor es restado respecto al centro de la image
+   y con esto se obtiene las coordenadas a partir del id global de nuestro hilo
+   que son relativas a nuestro plano
+
+  */
   int xCoord = gloID % w - xCent;
   int yCoord = yCent - gloID / w;
 
@@ -105,7 +113,9 @@ __global__ void GPU_HoughTranConst(unsigned char *pic, int w, int h, int *acc, f
       int rIdx = (r + rMax) / rScale;
 
       // TODO: Debemos usar atomic, pero que race condition hay si somos un thread por pixel? explique
-      // R// xyz
+      // R// Se debe utilizar atomic ya que estamos modificando el arreglo global, el cual es compartido
+      // por todos los hilos. De esta manera garantizamos que la transacción se realice adecuadamente y no
+      // ocasione race conditions.
       atomicAdd (acc + (rIdx * degreeBins + tIdx), 1);
     }
   }
